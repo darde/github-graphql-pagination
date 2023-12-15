@@ -32,7 +32,7 @@ type QueryProps = {
   }
 }
 
-const ITEMS_PER_PAGE = 5
+const ITEMS_PER_PAGE = 15
 const PAGINATION_BUTTONS_LENGTH = 5
 
 function App() {
@@ -95,7 +95,6 @@ function App() {
       page = id
     }
     
-    console.log({ id })
     refetch({
       ...refetchObject
     }).then(res => {
@@ -106,7 +105,7 @@ function App() {
       } else if (page < paginationLabels[0]) {
         pagLabels = [...paginationLabels.map((label) => label - PAGINATION_BUTTONS_LENGTH)]
       }
-      console.log('page > ', page)
+
       setPagination({
         hasNextPage: res.data!.search.pageInfo.hasNextPage,
         hasPreviousPage: res.data!.search.pageInfo.hasPreviousPage,
@@ -120,7 +119,6 @@ function App() {
     .finally(() => setPageLoading(false))
   }
 
-  console.log('pag page: ', pagination?.page)
   return (
     <div className='bg-slate-50 w-full h-full py-8'>
       <h1 className='text-3xl mb-8'>Popular Repositories</h1>
