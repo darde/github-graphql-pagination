@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import { LeftArrowIcon, RightArrowIcon } from "./icons"
-// import { PaginationProps } from "../types"
+
 
 type ButtonProps = {
   label: string
@@ -41,14 +41,11 @@ const EdgeButton = ({ children, disabled, direction, handleOnClick }: EdgeButton
   </button>
 )
 
-// type PaginationComponentProps = PaginationProps & {
-//   handlePageClick: (id: number) => void
-// }
-
 type PaginationProps = {
   hasNextPage: boolean
   hasPreviousPage: boolean
   page: number
+  labels: number[]
   handlePageClick: (id: number) => void
 }
 
@@ -56,6 +53,7 @@ const Pagination = ({
   hasNextPage,
   hasPreviousPage,
   page,
+  labels,
   handlePageClick,
 }: PaginationProps) => {
   return (
@@ -64,11 +62,11 @@ const Pagination = ({
         <LeftArrowIcon />
       </EdgeButton>
       {
-        Array(5).fill(0).map((_, index) =>
+        labels.map((label: number) =>
           <Button
             key={crypto.randomUUID()}
-            active={index + 1 == page}
-            label={String(index + 1)}
+            active={label == page}
+            label={String(label)}
             handleOnClick={handlePageClick}
           />
         )

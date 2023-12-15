@@ -18,11 +18,13 @@ type PaginationProps = {
   hasNextPage: boolean
   hasPreviousPage: boolean
   page: number
+  labels: number[]
 }
 
 type QueryProps = {
   search: {
     nodes: ResponseType[]
+    repositoryCount: number
     pageInfo: PaginationProps & {
       startCursor: string
       endCursor: string
@@ -31,13 +33,15 @@ type QueryProps = {
 }
 
 const ITEMS_PER_PAGE = 5
+const PAGINATION_BUTTONS_LENGTH = 5
 
 function App() {
   const [repositories, setRepositories] = useState<RepositoryType[]>([])
-  const [pagination, setPagination] = useState<PaginationProps | null>(null)
+  const [pagination, setPagination] = useState<PaginationProps | null>()
   const [startCursor, setStartCursor] = useState<string | null>(null)
   const [endCursor, setEndCursor] = useState<string | null>(null)
   const [pageLoading, setPageLoading] = useState(false)
+  const [paginationLabels, setPaginationLabels] = useState([1,2,3,4,5])
 
   const { data, loading, error, refetch } = useQuery<QueryProps>(GET_REACT_REPOSITORIES, {
     variables: { first: ITEMS_PER_PAGE, last: null, after: null, before: null }
@@ -60,6 +64,7 @@ function App() {
         hasNextPage: data!.search.pageInfo.hasNextPage,
         hasPreviousPage: data!.search.pageInfo.hasPreviousPage,
         page: 1,
+        labels: paginationLabels
       })
       setStartCursor(data!.search.pageInfo.startCursor)
       setEndCursor(data!.search.pageInfo.endCursor)
@@ -72,10 +77,9 @@ function App() {
   }
 
   async function handlePageClick(id: number) {
-    console.log({ id })
     setPageLoading(true)
-    let page = 1
     let refetchObject: { after: string | null, before: string | null, first: number | null, last: number | null } = { after: null, before: null, first: 5, last: null }
+    let page = pagination!.page
 
     if (id === 0) { // next page
       refetchObject = { first: ITEMS_PER_PAGE, last: null, after: endCursor, before: null }
@@ -87,26 +91,36 @@ function App() {
     } else {
       const offsetStartCursor = `cursor:${ITEMS_PER_PAGE * (id - 1)}`
       const encodedStartCursor = btoa(String(offsetStartCursor))
-      console.log({ encodedStartCursor })
       refetchObject = { first: ITEMS_PER_PAGE, last: null, after: encodedStartCursor, before: null }
       page = id
     }
     
-    console.log({refetchObject})
+    console.log({ id })
     refetch({
       ...refetchObject
     }).then(res => {
+      let pagLabels = paginationLabels.slice()
+
+      if (page > paginationLabels[paginationLabels.length - 1]) {
+        pagLabels = [...paginationLabels.map((_, idx) => page + idx)]
+      } else if (page < paginationLabels[0]) {
+        pagLabels = [...paginationLabels.map((label) => label - PAGINATION_BUTTONS_LENGTH)]
+      }
+      console.log('page > ', page)
       setPagination({
         hasNextPage: res.data!.search.pageInfo.hasNextPage,
         hasPreviousPage: res.data!.search.pageInfo.hasPreviousPage,
         page,
+        labels: pagLabels
       })
+      setPaginationLabels(pagLabels)
       setStartCursor(res.data!.search.pageInfo.startCursor)
       setEndCursor(res.data!.search.pageInfo.endCursor)
     }).catch(err => console.log({err}))
     .finally(() => setPageLoading(false))
   }
 
+  console.log('pag page: ', pagination?.page)
   return (
     <div className='bg-slate-50 w-full h-full py-8'>
       <h1 className='text-3xl mb-8'>Popular Repositories</h1>
