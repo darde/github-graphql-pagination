@@ -5,6 +5,7 @@ import { RepositoryType } from './types'
 import { SpinnerIcon } from './components/icons'
 import { GET_REACT_REPOSITORIES } from './queries/RepositoriesQuery'
 import Pagination from './components/Pagination'
+import Search from './components/Search'
 import './styles/global.css'
 
 
@@ -44,7 +45,13 @@ function App() {
   const [paginationLabels, setPaginationLabels] = useState([1,2,3,4,5])
 
   const { data, loading, error, refetch } = useQuery<QueryProps>(GET_REACT_REPOSITORIES, {
-    variables: { first: ITEMS_PER_PAGE, last: null, after: null, before: null }
+    variables: { 
+      first: ITEMS_PER_PAGE,
+      last: null,
+      after: null,
+      before: null,
+      querystring: "topic:python sort:updated-asc"
+    }
   })
   
   useEffect(() => {
@@ -74,6 +81,17 @@ function App() {
 
   if (error) {
     return <p>Error {error.message}</p>
+  }
+
+  function handleSearch(term: string) {
+    setPageLoading(true)
+    refetch({
+      querystring: term
+    }).catch(err => {
+      console.log(err)
+    }).finally(() => {
+      setPageLoading(false)
+    })
   }
 
   async function handlePageClick(id: number) {
@@ -120,9 +138,10 @@ function App() {
   }
 
   return (
-    <div className='bg-slate-50 w-full h-full py-8'>
-      <h1 className='text-3xl mb-8'>Popular Repositories</h1>
-      <div className='flex justify-center'>
+    <div className='bg-slate-50 w-full  py-8 flex flex-col justify-center items-center'>
+      <h1 className='w-full text-center text-3xl mb-8 p-0'>Popular Repositories</h1>
+      <div className='flex flex-col items-center justify-center w-full max-w-4xl'>
+        <Search handleSearch={handleSearch} />
         {
           pageLoading ? (
             <div className='flex flex-col justify-center items-center gap-4 mt-8'>
