@@ -8,7 +8,7 @@ type RepositoriesListType = {
 function TableList({ repositoriesList }: RepositoriesListType) {
 
   return (
-    <div className="shadow overflow-hidden rounded-xl border-b border-gray-200 w-full max-w-4xl">
+    <div className="shadow overflow-hidden rounded-xl border-b border-gray-200 w-full">
       <table className="w-full bg-white">
         <thead className="bg-gray-800 text-white">
           <tr className="text-left h-14 text-xl">
