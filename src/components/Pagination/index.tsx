@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { LeftArrowIcon, RightArrowIcon } from "./icons";
+import { LeftArrowIcon, RightArrowIcon } from "../icons";
 
 type ButtonProps = {
   label: string;
