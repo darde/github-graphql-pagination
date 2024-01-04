@@ -5,8 +5,6 @@ import { GET_REACT_REPOSITORIES } from "../queries/RepositoriesQuery";
 import App from ".";
 import { webcrypto } from "crypto";
 
-// type CryptoType = Crypto | typeof webcrypto;
-
 const ITEMS_PER_PAGE = 15;
 
 Object.defineProperty(globalThis, "crypto", {
@@ -48,16 +46,6 @@ const mocks = [
     },
   },
 ];
-
-// global.crypto = jest.fn(() => {
-//   Math.random();
-// });
-
-// object.defineproperty(global.self, "crypto", {
-//   value: {
-//     randomUUID: () => crypto.randomUUID(),
-//   },
-// });
 
 const loadingMock = {
   delay: 30,
